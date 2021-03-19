@@ -107,16 +107,16 @@ my1stMHWithinGibbs <- function(nchain, mu, Sigma, init,
 mu=0
 Sigma=10000
 
-theta1 <- my1stMHWithinGibbs(10000, mu, Sigma)
-theta2 <- my1stMHWithinGibbs(10000, mu, Sigma)
+theta1_G <- my1stMHWithinGibbs(10000, mu, Sigma)
+theta2_G <- my1stMHWithinGibbs(10000, mu, Sigma)
 
-chain1 <- theta1$chain
-chain2=theta2$chain
+chain1 <- theta1_G$chain
+chain2=theta2_G$chain
 
-acc.rates1 <- theta1$acc.rates
+acc.rates1 <- theta1_G$acc.rates
 acc.rates1
 
-acc.rates2=theta2$acc.rates
+acc.rates2=theta2_G$acc.rates
 acc.rates2
 
 par(mfrow=c(2,1))
@@ -127,9 +127,12 @@ plot(as.data.frame(chain1))
 plot(as.data.frame(chain2))
 
 
-
-
-
+par(mfrow=c(1,5))
+plot(theta2, type='l')
+plot(x1_etoile, type='l')
+plot(x2_etoile, type='l')
+plot(x3_etoile, type='l')
+plot(theta1, type='l')
 
 
 
