@@ -1,7 +1,9 @@
-Air = function(niter=10^5, init=c(0,0,0,0,0), prop.sd=c(0.001,0.001)){   #ajuster prop.sd selon acc.rates
+Air = function(niter=10^5, init=c(0,0,0,0,0), prop.sd=c(0.4,0.015)){   #ajuster prop.sd selon acc.rates
+  
   alpha = 4.48        
   beta = 0.76         
-  sigma2 = 81.14      
+  sigma2 = 81.14
+  sigma2_theta = 1024
   J = 3               
   y = c(21, 20, 15)
   n = c(48, 34, 21)
@@ -25,8 +27,8 @@ Air = function(niter=10^5, init=c(0,0,0,0,0), prop.sd=c(0.001,0.001)){   #ajuste
     #Mise à jour de theta_1
     prop = rnorm(1, current[4], prop.sd[1])
     
-    top = sum(y*(prop+current[5]*x) - n*log(1+exp(prop+current[5]*x)) + (-(prop^2+current[5]^2)/0.002))
-    bottom = sum(y*(current[4]+current[5]*x) - n*log(1+exp(current[4]+current[5]*x)) + (-(current[4]^2+current[5]^2)/0.002))
+    top = sum(y*(prop+current[5]*x) - n*log(1+exp(prop+current[5]*x)) + (-(prop^2+current[5]^2)/(2*sigma2_theta)))  
+    bottom = sum(y*(current[4]+current[5]*x) - n*log(1+exp(current[4]+current[5]*x)) + (-(current[4]^2+current[5]^2)/(2*sigma2_theta)))
     acc.prob = exp(top - bottom)
     
     if (runif(1) < acc.prob){
@@ -37,8 +39,8 @@ Air = function(niter=10^5, init=c(0,0,0,0,0), prop.sd=c(0.001,0.001)){   #ajuste
     #Mise à jour de theta_2
     prop = rnorm(1, current[5], prop.sd[2])
     
-    top = sum(y*(current[4]+prop*x) - n*log(1+exp(current[4]+prop*x)) + (-(current[4]^2+prop^2)/0.002))
-    bottom = sum(y*(current[4]+current[5]*x) - n*log(1+exp(current[4]+current[5]*x)) + (-(current[4]^2+current[5]^2)/0.002))
+    top = sum(y*(current[4]+prop*x) - n*log(1+exp(current[4]+prop*x)) + (-(current[4]^2+prop^2)/(2*sigma2_theta)))
+    bottom = sum(y*(current[4]+current[5]*x) - n*log(1+exp(current[4]+current[5]*x)) + (-(current[4]^2+current[5]^2)/(2*sigma2_theta)))
     acc.prob = exp(top - bottom)
     
     if (runif(1) < acc.prob){
@@ -60,9 +62,18 @@ for (i in 1:5){
   plot(chain[,i], type="l")
 }
 
-acc.rates
 mean(chain[,4])
-var(chain[,4])
-
 mean(chain[,5])
-var(chain[,5])
+
+sd(chain[,4])
+sd(chain[,5])
+
+summary(chain[,4])
+summary(chain[,5])
+
+par(mfrow=c(1,5))
+for (i in 1:5){
+  acf(chain[,i], lag.max=100)
+}
+
+#A faire : Elagage des theta et peut-être burning de x3
