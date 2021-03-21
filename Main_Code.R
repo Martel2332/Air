@@ -1,3 +1,91 @@
+Air = function(niter=10^4, init=c(0,0,0,0,0), prop.sd=c(1,1)){   #ajuster prop.sd selon acc.rates
+  alpha = 4.48        
+  beta = 0.76         
+  sigma2 = 81.14      
+  J = 3               
+  y = c(21, 20, 15)
+  n = c(48, 34, 21)
+  z = c(10, 30, 50)
+  
+  chain=matrix(NA, niter+1, 5)
+  chain[1,] = init
+ 
+  acc.rates = rep(0, 2)
+  
+  for (iter in 1:niter){
+    current = chain[iter,]
+    
+    #Mise à jour des x_i
+    for (i in 1:J){
+      prop = rnorm(alpha+beta*z[i], sqrt(1/sigma2))
+      current[i] = prop[i]
+    }
+    
+    #Mise à jour des theta_i
+    for (i in 4:5){
+      prop = rnorm(1, 0, prop.sd[i-3])
+      
+      top = #log(calcul)
+      bottom = #log(calcul)
+      acc.prob = exp(top - bottom)
+      
+      if (runif(1) < acc.prob){
+        current[i] = prop
+        acc.rates[i-3] = acc.rates[i-3] + 1
+      }
+    }
+    
+    chain[iter+1,] = current
+  }
+  
+  return(list(chain=chain, acc.rates=acc.rates/niter))
+}
+
+
+
+
+
+
+
+transformed data {
+  real<lower=0> sigma; 
+  sigma <- sqrt(sigma2); 
+} 
+
+parameters {
+  real theta1; 
+  real theta2; 
+  vector[J] X; 
+} 
+
+model {
+  real p[J];
+  theta1 ~ normal(0, 32);   // 32^2 = 1024 
+  theta2 ~ normal(0, 32); 
+  X ~ normal(alpha + beta * Z, sigma);
+  y ~ binomial_logit(n, theta1 + theta2 * X);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 alpha <- 4.48        
 beta <- 0.76         
