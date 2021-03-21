@@ -1,8 +1,4 @@
 Air = function(niter=10^5, init=c(0,0,0,0,0), prop.sd=c(0.001,0.001)){   #ajuster prop.sd selon acc.rates
-  init=c(0,0,0,0,0)
-  prop.sd=c(1,1)
-  
-  
   alpha = 4.48        
   beta = 0.76         
   sigma2 = 81.14      
