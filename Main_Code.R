@@ -100,37 +100,3 @@ mean(chain_elag[,3])
 mean(chain_elag[,4])
 mean(chain_elag[,5])
 
-#Confrontation numérique vs théorie
-
-alpha = 4.48        
-beta = 0.76         
-sigma2 = 81.14
-sigma2_theta = 1000
-J = 3               
-y = c(21, 20, 15)
-n = c(48, 34, 21)
-z = c(10, 30, 50)
-
-for (i in 1:3){
-  hist(chain_elag[,i], freq=FALSE, main="", xlab=para[i])
-  lines(density(rnorm(-20:80, alpha+beta*z[i], sqrt(sigma2))), lwd=2, col="blue")
-}
-
-
-
-
-
-for (i in 4:5){
-  hist(chain_elag[,i], freq=FALSE, main="", xlab=para[i])
-  lines(exp(sum(y*(theta1+theta2*rnorm(-20:80, alpha+beta*z[i], sqrt(sigma2))) 
-               - n*log(1+exp(theta1+theta2*rnorm(-20:80, alpha+beta*z[i], sqrt(sigma2)))) 
-               + (-(theta1^2+theta2^2)/(2*sigma2_theta)))), lwd=2, col="blue")
-}
-
-
-
-theta1 = theta2 = rnorm(100, 0, sqrt(sigma2_theta))
-
-exp(sum(y*(theta1+theta2*rnorm(100, alpha+beta*z[1], sqrt(sigma2))) 
-        - n*log(1+exp(theta1+theta2*rnorm(-20:80, alpha+beta*z[1], sqrt(sigma2)))) 
-        + (-(theta1^2+theta2^2)/(2*sigma2_theta))))
