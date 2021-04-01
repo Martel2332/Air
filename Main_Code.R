@@ -1,4 +1,4 @@
-Air = function(niter=10^5, init=c(12,27,43,-0.5,0.03), prop.sd=c(0.4,0.015)){   #ajuster prop.sd selon acc.rates
+Air = function(niter=10^5, init=c(12,27,43,-0.5,0.03), prop.sd=c(0.4,0.015)){   #ajuster prop.sd pour approcher 50% de acc.rates
   
   alpha = 4.48        
   beta = 0.76         
@@ -48,6 +48,7 @@ Air = function(niter=10^5, init=c(12,27,43,-0.5,0.03), prop.sd=c(0.4,0.015)){   
       acc.rates[2] = acc.rates[2] + 1
     }
     
+    #Mise à jour globale des chaînes
     chain[iter+1,] = current
   }
   
@@ -65,24 +66,18 @@ chain = Air()$chain
 par(mfrow=c(1,5))
 para = c("X[1]","X[2]","X[3]","theta[1]","theta[2]")
 for (i in 1:5){
-  plot(chain[,i], type="l", xlab="Iterations", ylab=para[i])
+  plot(chain[,i], type="l", xlab="Iterations", ylab="", main=para[i])
 }
 
-mean(chain[,1])
-mean(chain[,2])
-mean(chain[,3])
-mean(chain[,4])
-mean(chain[,5])
+colMeans(chain)
+summary(chain)
 
 sd(chain[,4])
 sd(chain[,5])
 
-summary(chain[,4])
-summary(chain[,5])
-
 par(mfrow=c(1,5))
 for (i in 1:5){
-  acf(chain[,i], lag.max=100, ylab=para[i])
+  acf(chain[,i], lag.max=100, main=para[i])
 }
 
 #Trop de corrélations pour les theta -----> élagage 
@@ -90,13 +85,11 @@ chain_elag = chain[seq(1, nrow(chain), by = 50),]
 
 par(mfrow=c(2,5))
 for (i in 1:5){
-  plot(chain_elag[,i], type="l", xlab="Iterations", ylab=para[i])
-  acf(chain_elag[,i], lag.max=1000, ylab=para[i])
+  plot(chain_elag[,i], type="l", xlab="Iterations", ylab="", main=para[i])
+}
+for (i in 1:5){
+  acf(chain_elag[,i], lag.max=100, main="")
 }
 
-mean(chain_elag[,1])
-mean(chain_elag[,2])
-mean(chain_elag[,3])
-mean(chain_elag[,4])
-mean(chain_elag[,5])
+colMeans(chain_elag)
 
